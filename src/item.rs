@@ -34,8 +34,8 @@ impl ItemComponent {
                     }))
                 }),
                 html!("td", {
-                    .child(html!("input", {
-                        .property("value", &item_ref.value)
+                    .child(html!("textarea", {
+                        .text(&item_ref.value)
                         .event(clone!(item, app => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
