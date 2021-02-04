@@ -10,17 +10,21 @@ use crate::item::{Item, ItemComponent, ItemKind, ItemStatus};
 
 #[derive(Debug)]
 pub struct App {
-    items: MutableVec<Rc<Mutable<Item>>>
+    items: MutableVec<Rc<Mutable<Item>>>,
+    sections: MutableVec<String>
 }
 
 impl App {
     pub async fn new() -> Rc<Self> {
         let items = crate::db_interface::get().await;
+        let sections = App::generate_sections(&items);
+
         // cloning of every item should probably not be happening
         let items = items.iter().map(|i| Rc::new(Mutable::new(i.clone()))).collect();
         let items = MutableVec::new_with_values(items);
         Rc::new(Self {
-            items
+            items,
+            sections,
         })
     }
 
@@ -54,11 +58,57 @@ impl App {
         vec.remove(index);
     }
 
+    fn generate_sections(item_vec: &Vec<Item>) -> MutableVec<String> {
+        let section_vec: MutableVec<String> = MutableVec::new();
+        for elem in item_vec.iter() {
+            section_vec.lock_mut().push_cloned(elem.section.clone());
+        };
+        section_vec
+    }
+
     pub fn render(app: Rc<Self>) -> Dom {
         html!("main", {
             .text("main")
             .children(&mut [
                 html!("table", {
+                    .child(
+                        html!("tr", {
+                            .children(&mut [
+                                html!("th", {
+                                    .text("ID")
+                                }),
+                                html!("th", {
+                                    .text("Section")
+                                }),
+                                html!("th", {
+                                    .text("Item Kind")
+                                }),
+                                html!("th", {
+                                    .text("English")
+                                }),
+                                html!("th", {
+                                    .text("Status")
+                                }),
+                                html!("th", {
+                                    .text("Zeplin reference")
+                                }),
+                                html!("th", {
+                                    .text("Comments")
+                                }),
+                                html!("th", {
+                                    .text("App")
+                                }),
+                                html!("th", {
+                                    .text("Element")
+                                }),
+                                html!("th", {
+                                    .text("Mock")
+                                }),
+                                html!("th", {
+                                }),
+                            ])
+                        })
+                    )
                     .children_signal_vec(app.items.signal_vec_cloned()
                         .map(clone!(app => move |item| {
                             ItemComponent::render(item.clone(), app.clone())
@@ -84,6 +134,16 @@ impl App {
                         save(items);
                     }))
                 }),
+
+                html!("datalist", {
+                    .property("id", "ice-cream-flavors")
+                    .children_signal_vec(app.sections.signal_vec_cloned()
+                        .map(|section| {
+                            html!("option", {
+                                .property("value", section)
+                            })
+                        }))
+                })
             ])
         })
     }

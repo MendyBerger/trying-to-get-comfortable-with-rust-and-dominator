@@ -14,7 +14,7 @@ pub async fn get() -> Vec<Item> {
                 "in_mock": false,
                 "comments": "fdsa",
                 "zeplin_reference": "",
-                "item_kind": "Subheading",
+                "item_kind": "Button",
                 "status": "Approved",
                 "section": "sec"
             },

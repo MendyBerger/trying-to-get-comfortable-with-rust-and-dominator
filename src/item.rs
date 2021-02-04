@@ -1,12 +1,17 @@
+use web_sys::HtmlSelectElement;
 use std::rc::Rc;
 use std::clone::Clone;
 use wasm_bindgen::prelude::*;
 use serde_derive::{Deserialize, Serialize};
 use futures_signals::signal::Mutable;
-use dominator::{Dom, html, clone, events};
+use dominator::{Dom, html, clone, events, with_node};
+use std::str::FromStr;
+use strum::IntoEnumIterator;
+use strum_macros::{EnumString, Display, EnumIter};
 use crate::App;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+
+#[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
 pub enum ItemKind {
     Heading,
     Subheading,
@@ -15,10 +20,11 @@ pub enum ItemKind {
     Toggle,
     Warning,
     Feedback,
+    #[strum(serialize = "Help Text")]
     HelpText,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
 pub enum ItemStatus {
     Approved,
     Discuss,
@@ -63,6 +69,37 @@ impl ItemComponent {
                     }))
                 }),
                 html!("td", {
+                    .child(html!("input", {
+                        .property("value", &item_ref.section)
+                        .attribute("list", "ice-cream-flavors")
+                        .event(clone!(item, app => move |event: events::Input| {
+                            let value: String = event.value().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.section = value;
+                        }))
+                    }))
+                }),
+                html!("td", {
+                    .child(html!("select" => HtmlSelectElement, {
+                        .with_node!(elem => {
+                            .event(clone!(item, app => move |_event: events::Change| {
+                                let value: String = elem.value();
+                                let mut item = item.lock_mut();
+                                item.item_kind = ItemKind::from_str(&value).unwrap_throw();
+                            }))
+                        })
+                        .children(
+                            ItemKind::iter().map(|o| {
+                                html!("option", {
+                                    .property("text", o.to_string())
+                                    .property("value", o.to_string())
+                                    .property("selected", o == item_ref.item_kind)
+                                })
+                            })
+                        )
+                    }))
+                }),
+                html!("td", {
                     .child(html!("textarea", {
                         .text(&item_ref.english)
                         .event(clone!(item, app => move |event: events::Input| {
@@ -73,16 +110,93 @@ impl ItemComponent {
                     }))
                 }),
                 html!("td", {
-                    .child(html!("button", {.text("log")}))
-                    .event(clone!(item => move |_event: events::Click| {
-                        crate::utils::log(&item);
+                    .child(html!("select" => HtmlSelectElement, {
+                        .with_node!(elem => {
+                            .event(clone!(item, app => move |_event: events::Change| {
+                                let value: String = elem.value();
+                                let mut item = item.lock_mut();
+                                item.status = ItemStatus::from_str(&value).unwrap_throw();
+                            }))
+                        })
+                        .children(
+                            ItemStatus::iter().map(|o| {
+                                html!("option", {
+                                    .property("text", o.to_string())
+                                    .property("value", o.to_string())
+                                    .property("selected", o == item_ref.status)
+                                })
+                            })
+                        )
                     }))
                 }),
                 html!("td", {
-                    .child(html!("button", {.text("-")}))
-                    .event(clone!(item, app => move |_event: events::Click| {
-                        app.remove_item(item.lock_ref().db_id);
+                    .child(html!("input", {
+                        .property("value", &item_ref.zeplin_reference)
+                        .event(clone!(item, app => move |event: events::Input| {
+                            let value: String = event.value().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.zeplin_reference = value;
+                        }))
                     }))
+                }),
+                html!("td", {
+                    .child(html!("input", {
+                        .property("value", &item_ref.comments)
+                        .event(clone!(item, app => move |event: events::Input| {
+                            let value: String = event.value().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.comments = value;
+                        }))
+                    }))
+                }),
+                html!("td", {
+                    .child(html!("input", {
+                        .attribute("type", "checkbox")
+                        .property("checked", item_ref.in_app)
+                        .event(clone!(item, app => move |event: events::Change| {
+                            let value: bool = event.checked().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.in_app = value;
+                        }))
+                    }))
+                }),
+                html!("td", {
+                    .child(html!("input", {
+                        .attribute("type", "checkbox")
+                        .property("checked", item_ref.in_element)
+                        .event(clone!(item, app => move |event: events::Change| {
+                            let value: bool = event.checked().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.in_element = value;
+                        }))
+                    }))
+                }),
+                html!("td", {
+                    .child(html!("input", {
+                        .attribute("type", "checkbox")
+                        .property("checked", item_ref.in_mock)
+                        .event(clone!(item, app => move |event: events::Change| {
+                            let value: bool = event.checked().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.in_mock = value;
+                        }))
+                    }))
+                }),
+                html!("td", {
+                    .children(&mut [
+                        html!("button", {
+                            .text("log")
+                            .event(clone!(item => move |_event: events::Click| {
+                                crate::utils::log(&item);
+                            }))
+                        }),
+                        html!("button", {
+                            .text("-")
+                            .event(clone!(item, app => move |_event: events::Click| {
+                                app.remove_item(item.lock_ref().db_id);
+                            }))
+                        }),
+                    ])
                 }),
             ])
         })
