@@ -5,7 +5,7 @@ use futures_signals::signal::Mutable;
 use futures_signals::signal_vec::{SignalVecExt, MutableVec, MutableVecLockRef};
 use dominator::{Dom, html, clone, events};
 use crate::db_interface::save;
-use crate::item::{Item, ItemComponent};
+use crate::item::{Item, ItemComponent, ItemKind, ItemStatus};
 
 
 #[derive(Debug)]
@@ -30,17 +30,27 @@ impl App {
         let itr = vec.iter();
         let last = itr.last();
         let last = last.unwrap_throw();
-        let next_id = last.lock_ref().id + 1;
+        let next_id = last.lock_ref().db_id + 1;
         vec.push_cloned(Rc::new(Mutable::new(Item {
-            id: next_id + 1,
-            key: "Ke3y".to_string(),
-            value: "val3ue".to_string()
+            // No! Please don't do this!
+            db_id: next_id + 1,
+            id: String::new(),
+            english: String::new(),
+
+            section: String::new(),
+            item_kind: ItemKind::Heading,
+            status: ItemStatus::Discuss,
+            zeplin_reference: String::new(),
+            comments: String::new(),
+            in_app: false,
+            in_element: false,
+            in_mock: false,
         })));
     }
 
     pub fn remove_item(&self, id: i32) {
         let mut vec = self.items.lock_mut();
-        let index = vec.iter().position(|i| i.lock_ref().id == id).unwrap();
+        let index = vec.iter().position(|i| i.lock_ref().db_id == id).unwrap();
         vec.remove(index);
     }
 

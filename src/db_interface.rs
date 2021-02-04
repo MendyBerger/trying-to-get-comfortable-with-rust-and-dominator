@@ -6,14 +6,30 @@ pub async fn get() -> Vec<Item> {
     let json = r#"
         [
             {
-                "id": 1,
-                "key": "simple",
-                "value": "Hello world"
+                "db_id": 1,
+                "id": "simple",
+                "english": "Hello world",
+                "in_app": false,
+                "in_element": false,
+                "in_mock": false,
+                "comments": "fdsa",
+                "zeplin_reference": "",
+                "item_kind": "Subheading",
+                "status": "Approved",
+                "section": "sec"
             },
             {
-                "id": 2,
-                "key": "complex",
-                "value": "{$userName} {$photoCount ->\n            [one] added a new photo\n           *[other] added {$photoCount} new photos\n        } to {$userGender ->\n            [male] his stream\n            [female] her stream\n           *[other] their stream\n        }."
+                "db_id": 2,
+                "id": "complex",
+                "english": "{$userName} {$photoCount ->\n            [one] added a new photo\n           *[other] added {$photoCount} new photos\n        } to {$userGender ->\n            [male] his stream\n            [female] her stream\n           *[other] their stream\n        }.",
+                "in_app": false,
+                "in_element": false,
+                "in_mock": false,
+                "comments": "fdsa",
+                "zeplin_reference": "",
+                "item_kind": "Subheading",
+                "status": "Approved",
+                "section": "sec"
             }
         ]
     "#;
