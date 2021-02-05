@@ -183,20 +183,30 @@ impl ItemComponent {
                     }))
                 }),
                 html!("td", {
-                    .children(&mut [
-                        html!("button", {
-                            .text("log")
-                            .event(clone!(item => move |_event: events::Click| {
-                                crate::utils::log(&item);
-                            }))
-                        }),
-                        html!("button", {
-                            .text("-")
-                            .event(clone!(item => move |_event: events::Click| {
-                                table_state.remove_item(item.lock_ref().db_id);
-                            }))
-                        }),
-                    ])
+                    .child(
+                        html!("div", {
+                            .class("actions-wrapper")
+                            .children(&mut [
+                                html!("button", {
+                                    .class("link-button")
+                                    .text("Clone")
+                                    .event(clone!(item => move |_event: events::Click| {
+                                        crate::utils::log(&item);
+                                    }))
+                                }),
+                                html!("span", {
+                                    .text("|")
+                                }),
+                                html!("button", {
+                                    .class("link-button")
+                                    .text("Delete")
+                                    .event(clone!(item => move |_event: events::Click| {
+                                        table_state.remove_item(item.lock_ref().db_id);
+                                    }))
+                                }),
+                            ])
+                        })
+                    )
                 }),
             ])
         })

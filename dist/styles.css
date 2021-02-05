@@ -1,5 +1,38 @@
+main {
+    display: grid;
+    grid-template-columns: 200px auto 160px 160px;
+    row-gap: 40px;
+    column-gap: 50px;
+    padding: 50px;
+}
+
+.icon-button {
+    height: 33px;
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
+.icon-button button {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+    width: 50px;
+}
+.icon-button button img {
+    max-height: 100%;
+    max-width: 50px;
+}
+.icon-button.select-columns {
+    grid-column: 3;
+}
+.icon-button.add-text {
+    grid-column: 4;
+}
+
 .ftl-table {
     border-collapse: collapse;
+    grid-column: 1 / -1;
 }
 .ftl-table td, th {
     border: solid white 2px;
@@ -9,6 +42,9 @@
     color: white;
     text-align: left;
     padding: 10px 10px;
+}
+.ftl-table th.office-use-only {
+    background-color: #afabab;
 }
 .ftl-table td {
     margin: 0;
@@ -25,4 +61,22 @@
     border: 0;
     /* resize: vertical; */
     height: 100%;
+    padding: 10px 10px;
+    width: 100px;
+}
+
+.link-button {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+.link-button:hover {
+    text-decoration: underline;
+}
+
+.actions-wrapper {
+    display: flex;
+    padding: 10px 10px;
+    column-gap: 5px;
 }

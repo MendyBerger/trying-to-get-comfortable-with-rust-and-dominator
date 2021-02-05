@@ -66,6 +66,8 @@ impl TableComponent {
     pub fn render(state: Rc<Self>) -> Dom {
         // just a placeholder because I don't know how to return 2 children
         html!("div", {
+            // inline style because I'd really like to remove this element altogether
+            .style("display", "contents")
             .children(&mut [
                 html!("table", {
                     .class("ftl-table")
@@ -94,12 +96,15 @@ impl TableComponent {
                                     .text("Comments")
                                 }),
                                 html!("th", {
+                                    .class("office-use-only")
                                     .text("App")
                                 }),
                                 html!("th", {
+                                    .class("office-use-only")
                                     .text("Element")
                                 }),
                                 html!("th", {
+                                    .class("office-use-only")
                                     .text("Mock")
                                 }),
                                 html!("th", {

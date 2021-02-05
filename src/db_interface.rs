@@ -21,7 +21,7 @@ pub async fn get() -> Vec<Item> {
             {
                 "db_id": 2,
                 "id": "complex",
-                "english": "{$userName} {$photoCount ->\n            [one] added a new photo\n           *[other] added {$photoCount} new photos\n        } to {$userGender ->\n            [male] his stream\n            [female] her stream\n           *[other] their stream\n        }.",
+                "english": "{$userName} {$photoCount ->\n    [one] added a new photo\n   *[other] added {$photoCount} new photos\n} to {$userGender ->\n    [male] his stream\n    [female] her stream\n   *[other] their stream\n}.\n",
                 "in_app": false,
                 "in_element": false,
                 "in_mock": false,
@@ -36,6 +36,15 @@ pub async fn get() -> Vec<Item> {
     // let json: String = fs::read_to_string("src/moc-db.json").unwrap();
     let vec: Vec<Item> = serde_json::from_str(&json).unwrap();
     vec
+}
+
+pub async fn get_entries() -> Vec<String> {
+    vec![
+        "JIG".to_string(),
+        "Memory game".to_string(),
+        "Publish".to_string(),
+        "Poster".to_string()
+    ]
 }
 
 pub fn save(vec: Vec<Item>) {
