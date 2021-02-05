@@ -1,0 +1,28 @@
+.ftl-table {
+    border-collapse: collapse;
+}
+.ftl-table td, th {
+    border: solid white 2px;
+}
+.ftl-table th {
+    background-color: #4472c4;
+    color: white;
+    text-align: left;
+    padding: 10px 10px;
+}
+.ftl-table td {
+    margin: 0;
+    padding: 0;
+}
+.ftl-table tr:nth-child(even) td {
+    background-color: #cfd5ea;
+}
+.ftl-table tr:nth-child(odd) td {
+    background-color: #e9ebf5;
+}
+.ftl-table td input:not([type=checkbox]), td textarea, td select {
+    background-color: transparent;
+    border: 0;
+    /* resize: vertical; */
+    height: 100%;
+}

@@ -68,6 +68,7 @@ impl TableComponent {
         html!("div", {
             .children(&mut [
                 html!("table", {
+                    .class("ftl-table")
                     .child(
                         html!("tr", {
                             .children(&mut [
