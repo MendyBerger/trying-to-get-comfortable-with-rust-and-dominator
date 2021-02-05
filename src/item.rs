@@ -1,52 +1,12 @@
+use crate::state::{ItemStatus, ItemKind, Item, State};
 use web_sys::HtmlSelectElement;
 use std::rc::Rc;
 use std::clone::Clone;
 use wasm_bindgen::prelude::*;
-use serde_derive::{Deserialize, Serialize};
 use futures_signals::signal::Mutable;
 use dominator::{Dom, html, clone, events, with_node};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
-use strum_macros::{EnumString, Display, EnumIter};
-use crate::table::TableComponent;
-
-
-#[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
-pub enum ItemKind {
-    Heading,
-    Subheading,
-    Button,
-    Instruction,
-    Toggle,
-    Warning,
-    Feedback,
-    #[strum(serialize = "Help Text")]
-    HelpText,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
-pub enum ItemStatus {
-    Approved,
-    Discuss,
-    #[strum(serialize = "On Hold")]
-    OnHold,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Item {
-    pub db_id: i32,
-    pub id: String,
-    pub section: String,
-    pub item_kind: ItemKind,
-    // maybe not the best idea to hard code the languages 
-    pub english: String,
-    pub status: ItemStatus,
-    pub zeplin_reference: String,
-    pub comments: String,
-    pub in_app: bool,
-    pub in_element: bool,
-    pub in_mock: bool,
-}
 
 
 #[derive(Clone)]
@@ -55,7 +15,7 @@ pub struct ItemComponent {
 }
 
 impl ItemComponent {
-    pub fn render(item: Rc<Mutable<Item>>, table_state: Rc<TableComponent>) -> Dom {
+    pub fn render(item: Rc<Mutable<Item>>, state: Rc<State>) -> Dom {
         let item_ref = item.lock_ref();
         html!("tr", {
             .children(&mut [
@@ -202,7 +162,7 @@ impl ItemComponent {
                                     .class("link-button")
                                     .text("Delete")
                                     .event(clone!(item => move |_event: events::Click| {
-                                        table_state.remove_item(item.lock_ref().db_id);
+                                        state.remove_item(item.lock_ref().db_id);
                                     }))
                                 }),
                             ])

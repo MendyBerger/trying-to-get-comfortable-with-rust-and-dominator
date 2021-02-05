@@ -1,30 +1,18 @@
+use crate::state::State;
 use crate::table::TableComponent;
 use std::rc::Rc;
 use dominator::{Dom, html, events, with_node, clone};
-use crate::item::Item;
 use web_sys::HtmlSelectElement;
 
 
 #[derive(Debug)]
 pub struct App {
-    items: Vec<Item>,
-    entries: Vec<String>,
-    selected_entry: String,
 }
 
 impl App {
-    pub async fn new() -> Rc<Self> {
-        let items = crate::db_interface::get().await;
-        let entries = crate::db_interface::get_entries().await;
-        let selected_entry = entries[0].clone();
-        Rc::new(Self {
-            items,
-            entries,
-            selected_entry
-        })
-    }
+    pub async fn render() -> Dom {
+        let state: Rc<State> = Rc::new(State::new().await);
 
-    pub fn render(app: Rc<Self>) -> Dom {
         html!("main", {
             .children(&mut [
                 html!("select" => HtmlSelectElement, {
@@ -35,11 +23,11 @@ impl App {
                         }))
                     })
                     .children(
-                        app.entries.iter().map(|e| {
+                        state.entries.iter().map(|e| {
                             html!("option", {
                                 .property("text", e.to_string())
                                 .property("value", e.to_string())
-                                .property("selected", e == &app.selected_entry)
+                                .property("selected", e == &state.selected_entry)
                             })
                         })
                     )
@@ -78,7 +66,7 @@ impl App {
                         }),
                     ])
                 }),
-                TableComponent::render(TableComponent::new(&app.items)),
+                TableComponent::render(state),
             ])
         })
     }
