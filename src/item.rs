@@ -28,6 +28,7 @@ pub enum ItemKind {
 pub enum ItemStatus {
     Approved,
     Discuss,
+    #[strum(serialize = "On Hold")]
     OnHold,
 }
 
