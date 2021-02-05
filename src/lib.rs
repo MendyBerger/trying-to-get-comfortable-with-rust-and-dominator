@@ -2,6 +2,7 @@ use wasm_bindgen::prelude::*;
 use crate::app::App;
 
 mod app;
+mod table;
 mod item;
 mod db_interface;
 mod utils;

@@ -8,7 +8,7 @@ use dominator::{Dom, html, clone, events, with_node};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumString, Display, EnumIter};
-use crate::App;
+use crate::table::TableComponent;
 
 
 #[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
@@ -54,14 +54,14 @@ pub struct ItemComponent {
 }
 
 impl ItemComponent {
-    pub fn render(item: Rc<Mutable<Item>>, app: Rc<App>) -> Dom {
+    pub fn render(item: Rc<Mutable<Item>>, table_state: Rc<TableComponent>) -> Dom {
         let item_ref = item.lock_ref();
         html!("tr", {
             .children(&mut [
                 html!("td", {
                     .child(html!("input", {
                         .property("value", &item_ref.id)
-                        .event(clone!(item, app => move |event: events::Input| {
+                        .event(clone!(item => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.id = value;
@@ -72,7 +72,7 @@ impl ItemComponent {
                     .child(html!("input", {
                         .property("value", &item_ref.section)
                         .attribute("list", "ice-cream-flavors")
-                        .event(clone!(item, app => move |event: events::Input| {
+                        .event(clone!(item => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.section = value;
@@ -82,7 +82,7 @@ impl ItemComponent {
                 html!("td", {
                     .child(html!("select" => HtmlSelectElement, {
                         .with_node!(elem => {
-                            .event(clone!(item, app => move |_event: events::Change| {
+                            .event(clone!(item => move |_event: events::Change| {
                                 let value: String = elem.value();
                                 let mut item = item.lock_mut();
                                 item.item_kind = ItemKind::from_str(&value).unwrap_throw();
@@ -102,7 +102,7 @@ impl ItemComponent {
                 html!("td", {
                     .child(html!("textarea", {
                         .text(&item_ref.english)
-                        .event(clone!(item, app => move |event: events::Input| {
+                        .event(clone!(item => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.english = value;
@@ -112,7 +112,7 @@ impl ItemComponent {
                 html!("td", {
                     .child(html!("select" => HtmlSelectElement, {
                         .with_node!(elem => {
-                            .event(clone!(item, app => move |_event: events::Change| {
+                            .event(clone!(item => move |_event: events::Change| {
                                 let value: String = elem.value();
                                 let mut item = item.lock_mut();
                                 item.status = ItemStatus::from_str(&value).unwrap_throw();
@@ -132,7 +132,7 @@ impl ItemComponent {
                 html!("td", {
                     .child(html!("input", {
                         .property("value", &item_ref.zeplin_reference)
-                        .event(clone!(item, app => move |event: events::Input| {
+                        .event(clone!(item => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.zeplin_reference = value;
@@ -142,7 +142,7 @@ impl ItemComponent {
                 html!("td", {
                     .child(html!("input", {
                         .property("value", &item_ref.comments)
-                        .event(clone!(item, app => move |event: events::Input| {
+                        .event(clone!(item => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.comments = value;
@@ -153,7 +153,7 @@ impl ItemComponent {
                     .child(html!("input", {
                         .attribute("type", "checkbox")
                         .property("checked", item_ref.in_app)
-                        .event(clone!(item, app => move |event: events::Change| {
+                        .event(clone!(item => move |event: events::Change| {
                             let value: bool = event.checked().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.in_app = value;
@@ -164,7 +164,7 @@ impl ItemComponent {
                     .child(html!("input", {
                         .attribute("type", "checkbox")
                         .property("checked", item_ref.in_element)
-                        .event(clone!(item, app => move |event: events::Change| {
+                        .event(clone!(item => move |event: events::Change| {
                             let value: bool = event.checked().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.in_element = value;
@@ -175,7 +175,7 @@ impl ItemComponent {
                     .child(html!("input", {
                         .attribute("type", "checkbox")
                         .property("checked", item_ref.in_mock)
-                        .event(clone!(item, app => move |event: events::Change| {
+                        .event(clone!(item => move |event: events::Change| {
                             let value: bool = event.checked().unwrap_throw();
                             let mut item = item.lock_mut();
                             item.in_mock = value;
@@ -192,8 +192,8 @@ impl ItemComponent {
                         }),
                         html!("button", {
                             .text("-")
-                            .event(clone!(item, app => move |_event: events::Click| {
-                                app.remove_item(item.lock_ref().db_id);
+                            .event(clone!(item => move |_event: events::Click| {
+                                table_state.remove_item(item.lock_ref().db_id);
                             }))
                         }),
                     ])
