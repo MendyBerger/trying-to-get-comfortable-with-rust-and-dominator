@@ -57,9 +57,10 @@ impl App {
                             .child(html!("img", {
                                 .attribute("src", "assets/add-icon.png")
                             }))
-                            .event(|_event: events::Click| {
+                            .event(clone!(state => move |_event: events::Click| {
                                 crate::utils::log("add text clicked");
-                            })
+                                state.add_item();
+                            }))
                         }),
                         html!("span", {
                             .text("Add a text")
