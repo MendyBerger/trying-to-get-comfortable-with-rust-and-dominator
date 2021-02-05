@@ -2,7 +2,7 @@ use crate::state::State;
 use std::rc::Rc;
 use futures_signals::signal_vec::SignalVecExt;
 use dominator::{Dom, html, clone};
-use crate::item::ItemComponent;
+use super::item::ItemComponent;
 
 
 #[derive(Debug)]

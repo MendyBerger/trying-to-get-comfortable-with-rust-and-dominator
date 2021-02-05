@@ -3,8 +3,7 @@ use crate::app::App;
 
 mod state;
 mod app;
-mod table;
-mod item;
+mod components;
 mod db_interface;
 mod utils;
 

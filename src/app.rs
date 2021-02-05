@@ -1,5 +1,5 @@
 use crate::state::State;
-use crate::table::TableComponent;
+use crate::components::table::TableComponent;
 use std::rc::Rc;
 use dominator::{Dom, html, events, with_node, clone};
 use web_sys::HtmlSelectElement;
