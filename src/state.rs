@@ -1,3 +1,4 @@
+use url::Url;
 use web_sys::HtmlDialogElement;
 use std::rc::Rc;
 use std::clone::Clone;
@@ -11,6 +12,7 @@ pub struct State {
     pub selected_entry: String,
     pub items: MutableVec<Rc<Mutable<Item>>>,
     pub sections: MutableVec<String>,
+    pub item_kinds: MutableVec<String>,
     pub visible_columns: MutableVec<String>,
     pub hidden_columns: MutableVec<String>,
     pub dialog_ref: Mutable<Option<HtmlDialogElement>>,
@@ -20,6 +22,7 @@ impl State {
     pub async fn new() -> State {
         let items = crate::db_interface::get().await;
         let sections = Self::generate_sections(&items);
+        let item_kinds = Self::generate_item_kinds(&items);
         let items = items.iter().map(|i| Rc::new(Mutable::new(i.clone()))).collect();
         let items = MutableVec::new_with_values(items);
         let entries = crate::db_interface::get_entries().await;
@@ -47,6 +50,7 @@ impl State {
             selected_entry,
             items,
             sections,
+            item_kinds,
             visible_columns,
             hidden_columns,
             dialog_ref: Mutable::new(None),
@@ -58,17 +62,16 @@ impl State {
         let itr = vec.iter();
         let last = itr.last();
         let last = last.unwrap();
-        let next_id = last.lock_ref().db_id + 1;
+        let next_id = last.lock_ref().id.clone() + "_";
         vec.push_cloned(Rc::new(Mutable::new(Item {
             // No! Please don't do this!
-            db_id: next_id + 1,
-            id: String::new(),
+            id: next_id,
             english: String::new(),
-
-            section: String::new(),
-            item_kind: ItemKind::Heading,
+            hebrew: String::new(),
+            section: None,
+            item_kind: None,
             status: ItemStatus::Discuss,
-            zeplin_reference: String::new(),
+            zeplin_reference: None,
             comments: String::new(),
             in_app: false,
             in_element: false,
@@ -76,34 +79,36 @@ impl State {
         })));
     }
 
-    pub fn remove_item(&self, id: i32) {
+    pub fn remove_item(&self, id: &str) {
         let mut vec = self.items.lock_mut();
-        let index = vec.iter().position(|i| i.lock_ref().db_id == id).unwrap();
+        let index = vec.iter().position(|i| i.lock_ref().id == id).unwrap();
         vec.remove(index);
     }
 
+    // this and generate_item_kinds should be consolidated somehow into one method
     fn generate_sections(item_vec: &Vec<Item>) -> MutableVec<String> {
         let section_vec: MutableVec<String> = MutableVec::new();
         for elem in item_vec.iter() {
-            section_vec.lock_mut().push_cloned(elem.section.clone());
+            let section = &elem.section;
+            if section.is_some() {
+                section_vec.lock_mut().push_cloned(section.clone().unwrap());
+            }
+        };
+        section_vec
+    }
+
+    fn generate_item_kinds(item_vec: &Vec<Item>) -> MutableVec<String> {
+        let section_vec: MutableVec<String> = MutableVec::new();
+        for elem in item_vec.iter() {
+            let item_kind = &elem.item_kind;
+            if item_kind.is_some() {
+                section_vec.lock_mut().push_cloned(item_kind.clone().unwrap());
+            }
         };
         section_vec
     }
 }
 
-
-#[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
-pub enum ItemKind {
-    Heading,
-    Subheading,
-    Button,
-    Instruction,
-    Toggle,
-    Warning,
-    Feedback,
-    #[strum(serialize = "Help Text")]
-    HelpText,
-}
 
 #[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
 pub enum ItemStatus {
@@ -113,16 +118,18 @@ pub enum ItemStatus {
     OnHold,
 }
 
+pub type Section = String;
+pub type ItemKind = String;
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Item {
-    pub db_id: i32,
     pub id: String,
-    pub section: String,
-    pub item_kind: ItemKind,
-    // maybe not the best idea to hard code the languages 
+    pub section: Option<Section>,
+    pub item_kind: Option<ItemKind>,
     pub english: String,
+    pub hebrew: String,
     pub status: ItemStatus,
-    pub zeplin_reference: String,
+    pub zeplin_reference: Option<Url>,
     pub comments: String,
     pub in_app: bool,
     pub in_element: bool,

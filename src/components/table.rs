@@ -68,11 +68,21 @@ impl TableComponent {
                 }),
 
                 html!("datalist", {
-                    .property("id", "ice-cream-flavors")
+                    .property("id", "sections")
                     .children_signal_vec(state.sections.signal_vec_cloned()
                         .map(|section| {
                             html!("option", {
                                 .property("value", section)
+                            })
+                        }))
+                }),
+
+                html!("datalist", {
+                    .property("id", "item-kinds")
+                    .children_signal_vec(state.item_kinds.signal_vec_cloned()
+                        .map(|item_kind| {
+                            html!("option", {
+                                .property("value", item_kind)
                             })
                         }))
                 }),

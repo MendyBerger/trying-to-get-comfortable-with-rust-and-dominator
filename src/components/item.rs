@@ -1,3 +1,5 @@
+use url::Url;
+use crate::state::Section;
 use crate::state::{ItemStatus, ItemKind, Item, State};
 use web_sys::HtmlSelectElement;
 use std::rc::Rc;
@@ -31,33 +33,28 @@ impl ItemComponent {
                 }),
                 html!("td", {
                     .child(html!("input", {
-                        .property("value", &item_ref.section)
-                        .attribute("list", "ice-cream-flavors")
+                        .apply_if(item_ref.section.is_some(), |dom| {
+                            dom.property("value", &item_ref.section.clone().unwrap())
+                        })
+                        .attribute("list", "sections")
                         .event(clone!(item => move |event: events::Input| {
-                            let value: String = event.value().unwrap_throw();
+                            let value: Section = event.value().unwrap_throw();
                             let mut item = item.lock_mut();
-                            item.section = value;
+                            item.section = Some(value);
                         }))
                     }))
                 }),
                 html!("td", {
-                    .child(html!("select" => HtmlSelectElement, {
-                        .with_node!(elem => {
-                            .event(clone!(item => move |_event: events::Change| {
-                                let value: String = elem.value();
-                                let mut item = item.lock_mut();
-                                item.item_kind = ItemKind::from_str(&value).unwrap_throw();
-                            }))
+                    .child(html!("input", {
+                        .apply_if(item_ref.item_kind.is_some(), |dom| {
+                            dom.property("value", &item_ref.item_kind.clone().unwrap())
                         })
-                        .children(
-                            ItemKind::iter().map(|o| {
-                                html!("option", {
-                                    .property("text", o.to_string())
-                                    .property("value", o.to_string())
-                                    .property("selected", o == item_ref.item_kind)
-                                })
-                            })
-                        )
+                        .attribute("list", "item-kinds")
+                        .event(clone!(item => move |event: events::Input| {
+                            let value: ItemKind = event.value().unwrap_throw();
+                            let mut item = item.lock_mut();
+                            item.item_kind = Some(value);
+                        }))
                     }))
                 }),
                 html!("td", {
@@ -92,11 +89,18 @@ impl ItemComponent {
                 }),
                 html!("td", {
                     .child(html!("input", {
-                        .property("value", &item_ref.zeplin_reference)
+                        .property("type", "url")
+                        .apply_if(item_ref.zeplin_reference.is_some(), |dom| {
+                            dom.property("value", &item_ref.zeplin_reference.clone().unwrap().to_string())
+                        })
                         .event(clone!(item => move |event: events::Input| {
                             let value: String = event.value().unwrap_throw();
-                            let mut item = item.lock_mut();
-                            item.zeplin_reference = value;
+                            let value = Url::parse(&value);
+
+                            if value.is_ok() {
+                                let mut item = item.lock_mut();
+                                item.zeplin_reference = Some(value.unwrap());
+                            }
                         }))
                     }))
                 }),
@@ -162,7 +166,7 @@ impl ItemComponent {
                                     .class("link-button")
                                     .text("Delete")
                                     .event(clone!(item => move |_event: events::Click| {
-                                        state.remove_item(item.lock_ref().db_id);
+                                        state.remove_item(&item.lock_ref().id);
                                     }))
                                 }),
                             ])
