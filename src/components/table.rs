@@ -3,6 +3,7 @@ use std::rc::Rc;
 use futures_signals::signal_vec::SignalVecExt;
 use dominator::{Dom, html, clone};
 use super::item::ItemComponent;
+use super::select_columns::SelectColumns;
 
 
 #[derive(Debug)]
@@ -74,7 +75,9 @@ impl TableComponent {
                                 .property("value", section)
                             })
                         }))
-                })
+                }),
+
+                SelectColumns::render(state.clone()),
             ])
         })
     }

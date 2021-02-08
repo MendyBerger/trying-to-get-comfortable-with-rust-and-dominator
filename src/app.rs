@@ -40,9 +40,11 @@ impl App {
                             .child(html!("img", {
                                 .attribute("src", "assets/select-columns-icon.png")
                             }))
-                            .event(|_event: events::Click| {
-                                crate::utils::log("select columns clicked");
-                            })
+                            .event(clone!(state => move |_event: events::Click| {
+                                state.dialog_ref
+                                    .lock_ref().clone().unwrap()
+                                    .show_modal().unwrap();
+                            }))
                         }),
                         html!("span", {
                             .text("Select columns to display")
@@ -58,7 +60,6 @@ impl App {
                                 .attribute("src", "assets/add-icon.png")
                             }))
                             .event(clone!(state => move |_event: events::Click| {
-                                crate::utils::log("add text clicked");
                                 state.add_item();
                             }))
                         }),

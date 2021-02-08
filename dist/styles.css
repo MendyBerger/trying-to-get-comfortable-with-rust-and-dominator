@@ -80,3 +80,32 @@ main {
     padding: 10px 10px;
     column-gap: 5px;
 }
+
+dialog {
+    border-radius: 8px;
+    border: solid #00000040 1px;
+}
+.column-selection-contents {
+    display: grid;
+    grid-template-columns: repeat(2, 200px);
+}
+.column-selection-contents hr {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+.column-selection-contents header {
+    grid-column: 1 / -1;
+    text-align: center;
+}
+.column-selection-contents ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.column-selection-contents .actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 10px;
+}

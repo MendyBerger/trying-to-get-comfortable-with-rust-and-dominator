@@ -1,3 +1,4 @@
+use web_sys::HtmlDialogElement;
 use std::rc::Rc;
 use std::clone::Clone;
 use serde_derive::{Deserialize, Serialize};
@@ -10,6 +11,9 @@ pub struct State {
     pub selected_entry: String,
     pub items: MutableVec<Rc<Mutable<Item>>>,
     pub sections: MutableVec<String>,
+    pub visible_columns: MutableVec<String>,
+    pub hidden_columns: MutableVec<String>,
+    pub dialog_ref: Mutable<Option<HtmlDialogElement>>,
 }
 
 impl State {
@@ -20,11 +24,32 @@ impl State {
         let items = MutableVec::new_with_values(items);
         let entries = crate::db_interface::get_entries().await;
         let selected_entry = entries[0].clone();
+
+
+        let visible_columns = vec![
+            "ID".to_string(),
+            "Section".to_string(),
+            "Item Kind".to_string(),
+            "English".to_string(),
+            "Status".to_string(),
+            "Zeplin reference".to_string(),
+            "Comments".to_string(),
+        ];
+        let hidden_columns = vec![
+            "App".to_string(),
+            "Element".to_string(),
+            "Mock".to_string(),
+        ];
+        let visible_columns = MutableVec::new_with_values(visible_columns);
+        let hidden_columns = MutableVec::new_with_values(hidden_columns);
         Self {
             entries,
             selected_entry,
             items,
             sections,
+            visible_columns,
+            hidden_columns,
+            dialog_ref: Mutable::new(None),
         }
     }
 
