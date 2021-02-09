@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::utils::log;
 use crate::state::Item;
 
@@ -38,13 +39,13 @@ pub async fn get() -> Vec<Item> {
     vec
 }
 
-pub async fn get_entries() -> Vec<String> {
-    vec![
-        "JIG".to_string(),
-        "Memory game".to_string(),
-        "Publish".to_string(),
-        "Poster".to_string()
-    ]
+pub async fn get_entries() -> HashMap<String, bool> {
+    let mut map = HashMap::new();
+    map.insert("JIG".to_string(), false);
+    map.insert("Memory game".to_string(), false);
+    map.insert("Publish".to_string(), true);
+    map.insert("Poster".to_string(), false);
+    map
 }
 
 pub fn save(vec: Vec<Item>) {

@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::utils::get_random_string;
 use url::Url;
 use web_sys::HtmlDialogElement;
@@ -9,8 +10,7 @@ use futures_signals::signal_vec::MutableVec;
 use strum_macros::{EnumString, Display, EnumIter};
 
 pub struct State {
-    pub entries: Vec<String>,
-    pub selected_entry: String,
+    pub entries: HashMap<String, bool>,
     pub items: MutableVec<Rc<Mutable<Item>>>,
     pub sections: MutableVec<String>,
     pub item_kinds: MutableVec<String>,
@@ -27,7 +27,6 @@ impl State {
         let items = items.iter().map(|i| Rc::new(Mutable::new(i.clone()))).collect();
         let items = MutableVec::new_with_values(items);
         let entries = crate::db_interface::get_entries().await;
-        let selected_entry = entries[0].clone();
 
 
         let visible_columns = vec![
@@ -48,7 +47,6 @@ impl State {
         let hidden_columns = MutableVec::new_with_values(hidden_columns);
         Self {
             entries,
-            selected_entry,
             items,
             sections,
             item_kinds,

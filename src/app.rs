@@ -16,6 +16,7 @@ impl App {
         html!("main", {
             .children(&mut [
                 html!("select" => HtmlSelectElement, {
+                    .attribute("multiple", "")
                     .with_node!(elem => {
                         .event(clone!(elem => move |_:events::Change| {
                             let selected_entry: String = elem.value();
@@ -23,11 +24,11 @@ impl App {
                         }))
                     })
                     .children(
-                        state.entries.iter().map(|e| {
+                        state.entries.iter().map(|(e, selected)| {
                             html!("option", {
                                 .property("text", e.to_string())
                                 .property("value", e.to_string())
-                                .property("selected", e == &state.selected_entry)
+                                .property("selected", selected.clone())
                             })
                         })
                     )
