@@ -155,8 +155,8 @@ impl ItemComponent {
                                 html!("button", {
                                     .class("link-button")
                                     .text("Clone")
-                                    .event(clone!(item => move |_event: events::Click| {
-                                        crate::utils::log(&item);
+                                    .event(clone!(state, item => move |_event: events::Click| {
+                                        state.clone_item(&item.lock_ref());
                                     }))
                                 }),
                                 html!("span", {
@@ -165,7 +165,7 @@ impl ItemComponent {
                                 html!("button", {
                                     .class("link-button")
                                     .text("Delete")
-                                    .event(clone!(item => move |_event: events::Click| {
+                                    .event(clone!(state, item => move |_event: events::Click| {
                                         state.remove_item(&item.lock_ref().id);
                                     }))
                                 }),

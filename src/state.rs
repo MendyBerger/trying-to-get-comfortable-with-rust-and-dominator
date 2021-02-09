@@ -1,3 +1,4 @@
+use crate::utils::get_random_string;
 use url::Url;
 use web_sys::HtmlDialogElement;
 use std::rc::Rc;
@@ -59,13 +60,8 @@ impl State {
 
     pub fn add_item(&self) {
         let mut vec = self.items.lock_mut();
-        let itr = vec.iter();
-        let last = itr.last();
-        let last = last.unwrap();
-        let next_id = last.lock_ref().id.clone() + "_";
         vec.push_cloned(Rc::new(Mutable::new(Item {
-            // No! Please don't do this!
-            id: next_id,
+            id: get_random_string(10),
             english: String::new(),
             hebrew: String::new(),
             section: None,
@@ -77,6 +73,14 @@ impl State {
             in_element: false,
             in_mock: false,
         })));
+    }
+
+    pub fn clone_item(&self, item: &Item) {
+        let mut item = item.clone();
+        item.id = get_random_string(10);
+        let item = Rc::new(Mutable::new(item));
+        let mut vec = self.items.lock_mut();
+        vec.push_cloned(item);
     }
 
     pub fn remove_item(&self, id: &str) {
