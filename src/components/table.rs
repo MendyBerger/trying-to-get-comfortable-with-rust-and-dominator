@@ -18,45 +18,57 @@ impl TableComponent {
             // inline style because I'd really like to remove this element altogether
             .style("display", "contents")
             .children(&mut [
-                html!("table", {
+                html!("div", {
                     .class("ftl-table")
                     .child(
-                        html!("tr", {
+                        html!("div", {
+                            .class("ftl-row")
                             .children(&mut [
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("ID")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("Section")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("Item Kind")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("English")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("Status")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("Zeplin reference")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .text("Comments")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .class("office-use-only")
                                     .text("App")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .class("office-use-only")
                                     .text("Element")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                     .class("office-use-only")
                                     .text("Mock")
                                 }),
-                                html!("th", {
+                                html!("div", {
+                                    .class("ftl-header-cell")
                                 }),
                             ])
                         })

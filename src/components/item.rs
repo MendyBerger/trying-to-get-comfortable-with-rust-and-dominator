@@ -19,9 +19,11 @@ pub struct ItemComponent {
 impl ItemComponent {
     pub fn render(item: Rc<Mutable<Item>>, state: Rc<State>) -> Dom {
         let item_ref = item.lock_ref();
-        html!("tr", {
+        html!("div", {
+            .class("ftl-row")
             .children(&mut [
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .property("value", &item_ref.id)
                         .event(clone!(item => move |event: events::Input| {
@@ -31,7 +33,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .apply_if(item_ref.section.is_some(), |dom| {
                             dom.property("value", &item_ref.section.clone().unwrap())
@@ -44,7 +47,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .apply_if(item_ref.item_kind.is_some(), |dom| {
                             dom.property("value", &item_ref.item_kind.clone().unwrap())
@@ -57,7 +61,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("textarea", {
                         .text(&item_ref.english)
                         .event(clone!(item => move |event: events::Input| {
@@ -67,7 +72,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("select" => HtmlSelectElement, {
                         .with_node!(elem => {
                             .event(clone!(item => move |_event: events::Change| {
@@ -87,7 +93,8 @@ impl ItemComponent {
                         )
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .property("type", "url")
                         .apply_if(item_ref.zeplin_reference.is_some(), |dom| {
@@ -104,7 +111,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .property("value", &item_ref.comments)
                         .event(clone!(item => move |event: events::Input| {
@@ -114,7 +122,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .attribute("type", "checkbox")
                         .property("checked", item_ref.in_app)
@@ -125,7 +134,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .attribute("type", "checkbox")
                         .property("checked", item_ref.in_element)
@@ -136,7 +146,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(html!("input", {
                         .attribute("type", "checkbox")
                         .property("checked", item_ref.in_mock)
@@ -147,7 +158,8 @@ impl ItemComponent {
                         }))
                     }))
                 }),
-                html!("td", {
+                html!("div", {
+                    .class("ftl-cell")
                     .child(
                         html!("div", {
                             .class("actions-wrapper")

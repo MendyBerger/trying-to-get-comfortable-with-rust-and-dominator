@@ -31,38 +31,49 @@ main {
 }
 
 .ftl-table {
-    border-collapse: collapse;
     grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(11, auto);
 }
-.ftl-table td, th {
+.ftl-table .ftl-row {
+    display: contents;
+}
+.ftl-table .ftl-cell, .ftl-table .ftl-header-cell {
     border: solid white 2px;
 }
-.ftl-table th {
+.ftl-table .ftl-header-cell {
     background-color: #4472c4;
     color: white;
     text-align: left;
     padding: 10px 10px;
 }
-.ftl-table th.office-use-only {
+.ftl-table .ftl-header-cell.office-use-only {
     background-color: #afabab;
 }
-.ftl-table td {
+.ftl-table .ftl-cell {
     margin: 0;
     padding: 0;
 }
-.ftl-table tr:nth-child(even) td {
+.ftl-table .ftl-row:nth-child(even) .ftl-cell {
     background-color: #cfd5ea;
 }
-.ftl-table tr:nth-child(odd) td {
+.ftl-table .ftl-row:nth-child(odd) .ftl-cell {
     background-color: #e9ebf5;
 }
-.ftl-table td input:not([type=checkbox]), td textarea, td select {
+.ftl-table .ftl-cell input:not([type=checkbox]),
+.ftl-table .ftl-cell textarea,
+.ftl-table .ftl-cell select {
     background-color: transparent;
     border: 0;
     /* resize: vertical; */
     height: 100%;
-    padding: 10px 10px;
+    padding: 0 10px;
     width: 100px;
+}
+
+.ftl-table .ftl-cell textarea {
+    min-width: 300px;
+    min-height: 100px;
 }
 
 .link-button {
