@@ -85,6 +85,9 @@ dialog {
     border-radius: 8px;
     border: solid #00000040 1px;
 }
+dialog::backdrop {
+    background-color: #00000060;
+}
 .column-selection-contents {
     display: grid;
     grid-template-columns: repeat(2, 200px);
