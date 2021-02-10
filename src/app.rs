@@ -62,7 +62,7 @@ impl App {
                             }))
                             .event(clone!(state => move |_event: events::Click| {
                                 state.loader.load(clone!(state => async move {
-                                    state.add_item().await;
+                                    state.add_translation().await;
                                 }))
                             }))
                         }),

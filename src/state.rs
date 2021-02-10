@@ -12,7 +12,7 @@ use strum_macros::{EnumString, Display, EnumIter};
 
 pub struct State {
     pub entries: HashMap<String, bool>,
-    pub items: MutableVec<Rc<Mutable<Item>>>,
+    pub translations: MutableVec<Rc<Mutable<Translation>>>,
     pub sections: MutableVec<String>,
     pub item_kinds: MutableVec<String>,
     pub visible_columns: MutableVec<String>,
@@ -35,17 +35,17 @@ impl State {
             .filter(|entry| *entry.1)
             .map(|entry| entry.0)
             .collect();
-        let items = db_interface::get_translations(&visible_entries).await;
-        let sections = Self::generate_sections(&items);
-        let item_kinds = Self::generate_item_kinds(&items);
-        let items = items.iter().map(|i| Rc::new(Mutable::new(i.clone()))).collect();
-        let items = MutableVec::new_with_values(items);
+        let translations = db_interface::get_translations(&visible_entries).await;
+        let sections = Self::generate_sections(&translations);
+        let item_kinds = Self::generate_item_kinds(&translations);
+        let translations = translations.iter().map(|i| Rc::new(Mutable::new(i.clone()))).collect();
+        let translations = MutableVec::new_with_values(translations);
 
 
         let visible_columns = vec![
             "ID".to_string(),
             "Section".to_string(),
-            "Item Kind".to_string(),
+            "Translation Kind".to_string(),
             "English".to_string(),
             "Status".to_string(),
             "Zeplin reference".to_string(),
@@ -60,7 +60,7 @@ impl State {
         let hidden_columns = MutableVec::new_with_values(hidden_columns);
         Self {
             entries,
-            items,
+            translations,
             sections,
             item_kinds,
             visible_columns,
@@ -70,28 +70,28 @@ impl State {
         }
     }
 
-    pub async fn add_item(&self) {
-        let item = db_interface::create_translation().await;
-        let mut vec = self.items.lock_mut();
-        vec.push_cloned(Rc::new(Mutable::new(item)));
+    pub async fn add_translation(&self) {
+        let translation = db_interface::create_translation().await;
+        let mut vec = self.translations.lock_mut();
+        vec.push_cloned(Rc::new(Mutable::new(translation)));
     }
 
-    pub async fn clone_item(&self, item: &Item) {
-        let item = db_interface::clone_translation(&item).await;
-        let mut vec = self.items.lock_mut();
-        vec.push_cloned(Rc::new(Mutable::new(item)));
+    pub async fn clone_translation(&self, translation: &Translation) {
+        let translation = db_interface::clone_translation(&translation).await;
+        let mut vec = self.translations.lock_mut();
+        vec.push_cloned(Rc::new(Mutable::new(translation)));
     }
 
-    pub fn remove_item(&self, id: &str) {
-        let mut vec = self.items.lock_mut();
+    pub fn remove_translation(&self, id: &str) {
+        let mut vec = self.translations.lock_mut();
         let index = vec.iter().position(|i| i.lock_ref().id == id).unwrap();
         vec.remove(index);
     }
 
     // this and generate_item_kinds should be consolidated somehow into one method
-    fn generate_sections(item_vec: &Vec<Item>) -> MutableVec<String> {
+    fn generate_sections(translation_vec: &Vec<Translation>) -> MutableVec<String> {
         let section_vec: MutableVec<String> = MutableVec::new();
-        for elem in item_vec.iter() {
+        for elem in translation_vec.iter() {
             let section = &elem.section;
             if section.is_some() {
                 section_vec.lock_mut().push_cloned(section.clone().unwrap());
@@ -100,9 +100,9 @@ impl State {
         section_vec
     }
 
-    fn generate_item_kinds(item_vec: &Vec<Item>) -> MutableVec<String> {
+    fn generate_item_kinds(translation_vec: &Vec<Translation>) -> MutableVec<String> {
         let section_vec: MutableVec<String> = MutableVec::new();
-        for elem in item_vec.iter() {
+        for elem in translation_vec.iter() {
             let item_kind = &elem.item_kind;
             if item_kind.is_some() {
                 section_vec.lock_mut().push_cloned(item_kind.clone().unwrap());
@@ -114,7 +114,7 @@ impl State {
 
 
 #[derive(Debug, Clone, Deserialize, Serialize, EnumString, Display, EnumIter, PartialEq)]
-pub enum ItemStatus {
+pub enum TranslationStatus {
     Approved,
     Discuss,
     #[strum(serialize = "On Hold")]
@@ -125,13 +125,13 @@ pub type Section = String;
 pub type ItemKind = String;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Item {
+pub struct Translation {
     pub id: String,
     pub section: Option<Section>,
     pub item_kind: Option<ItemKind>,
     pub english: String,
     pub hebrew: String,
-    pub status: ItemStatus,
+    pub status: TranslationStatus,
     pub zeplin_reference: Option<Url>,
     pub comments: String,
     pub in_app: bool,

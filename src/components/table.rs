@@ -2,7 +2,7 @@ use crate::state::State;
 use std::rc::Rc;
 use futures_signals::signal_vec::SignalVecExt;
 use dominator::{Dom, html, clone};
-use super::item::ItemComponent;
+use super::translation::TranslationRow;
 use super::select_columns::SelectColumns;
 
 
@@ -34,7 +34,7 @@ impl TableComponent {
                                 }),
                                 html!("div", {
                                     .class("ftl-header-cell")
-                                    .text("Item Kind")
+                                    .text("Translation Kind")
                                 }),
                                 html!("div", {
                                     .class("ftl-header-cell")
@@ -73,9 +73,9 @@ impl TableComponent {
                             ])
                         })
                     )
-                    .children_signal_vec(state.items.signal_vec_cloned()
-                        .map(clone!(state => move |item| {
-                            ItemComponent::render(item.clone(), state.clone())
+                    .children_signal_vec(state.translations.signal_vec_cloned()
+                        .map(clone!(state => move |translation| {
+                            TranslationRow::render(translation.clone(), state.clone())
                         })))
                 }),
 
@@ -90,7 +90,7 @@ impl TableComponent {
                 }),
 
                 html!("datalist", {
-                    .property("id", "item-kinds")
+                    .property("id", "translation-kinds")
                     .children_signal_vec(state.item_kinds.signal_vec_cloned()
                         .map(|item_kind| {
                             html!("option", {
