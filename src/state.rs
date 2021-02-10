@@ -1,5 +1,6 @@
+use dominator_helpers::futures::AsyncLoader;
 use std::collections::HashMap;
-use crate::utils::get_random_string;
+use crate::db_interface;
 use url::Url;
 use web_sys::HtmlDialogElement;
 use std::rc::Rc;
@@ -17,16 +18,28 @@ pub struct State {
     pub visible_columns: MutableVec<String>,
     pub hidden_columns: MutableVec<String>,
     pub dialog_ref: Mutable<Option<HtmlDialogElement>>,
+    pub loader: Rc<AsyncLoader>,
 }
 
 impl State {
     pub async fn new() -> State {
-        let items = crate::db_interface::get().await;
+        let entries: HashMap<String, bool> = db_interface::get_entries()
+            .await
+            .iter()
+            .map(|entry| (entry.clone(), true))
+            .collect();
+
+        // this should probably react to a signal update
+        let visible_entries: Vec<&String> = entries
+            .iter()
+            .filter(|entry| *entry.1)
+            .map(|entry| entry.0)
+            .collect();
+        let items = db_interface::get_translations(&visible_entries).await;
         let sections = Self::generate_sections(&items);
         let item_kinds = Self::generate_item_kinds(&items);
         let items = items.iter().map(|i| Rc::new(Mutable::new(i.clone()))).collect();
         let items = MutableVec::new_with_values(items);
-        let entries = crate::db_interface::get_entries().await;
 
 
         let visible_columns = vec![
@@ -53,32 +66,20 @@ impl State {
             visible_columns,
             hidden_columns,
             dialog_ref: Mutable::new(None),
+            loader: Rc::new(AsyncLoader::new()),
         }
     }
 
-    pub fn add_item(&self) {
+    pub async fn add_item(&self) {
+        let item = db_interface::create_translation().await;
         let mut vec = self.items.lock_mut();
-        vec.push_cloned(Rc::new(Mutable::new(Item {
-            id: get_random_string(10),
-            english: String::new(),
-            hebrew: String::new(),
-            section: None,
-            item_kind: None,
-            status: ItemStatus::Discuss,
-            zeplin_reference: None,
-            comments: String::new(),
-            in_app: false,
-            in_element: false,
-            in_mock: false,
-        })));
+        vec.push_cloned(Rc::new(Mutable::new(item)));
     }
 
-    pub fn clone_item(&self, item: &Item) {
-        let mut item = item.clone();
-        item.id = get_random_string(10);
-        let item = Rc::new(Mutable::new(item));
+    pub async fn clone_item(&self, item: &Item) {
+        let item = db_interface::clone_translation(&item).await;
         let mut vec = self.items.lock_mut();
-        vec.push_cloned(item);
+        vec.push_cloned(Rc::new(Mutable::new(item)));
     }
 
     pub fn remove_item(&self, id: &str) {

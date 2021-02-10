@@ -168,7 +168,9 @@ impl ItemComponent {
                                     .class("link-button")
                                     .text("Clone")
                                     .event(clone!(state, item => move |_event: events::Click| {
-                                        state.clone_item(&item.lock_ref());
+                                        state.loader.load(clone!(state, item => async move {
+                                            state.clone_item(&item.lock_ref()).await;
+                                        }))
                                     }))
                                 }),
                                 html!("span", {

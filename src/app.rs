@@ -61,7 +61,9 @@ impl App {
                                 .attribute("src", "assets/add-icon.png")
                             }))
                             .event(clone!(state => move |_event: events::Click| {
-                                state.add_item();
+                                state.loader.load(clone!(state => async move {
+                                    state.add_item().await;
+                                }))
                             }))
                         }),
                         html!("span", {
