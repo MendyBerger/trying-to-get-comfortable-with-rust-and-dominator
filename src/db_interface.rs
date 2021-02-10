@@ -17,7 +17,7 @@ pub async fn get() -> Vec<Item> {
                 "zeplin_reference": null,
                 "item_kind": "Button",
                 "status": "Approved",
-                "section": "sec"
+                "section": "sec1"
             },
             {
                 "id": "complex",
@@ -30,7 +30,7 @@ pub async fn get() -> Vec<Item> {
                 "zeplin_reference": "https://google.com",
                 "item_kind": "Subheading",
                 "status": "Approved",
-                "section": "sec"
+                "section": "sec2"
             }
         ]
     "#;

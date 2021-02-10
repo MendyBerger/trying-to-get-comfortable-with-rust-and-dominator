@@ -43,8 +43,8 @@ impl App {
                             }))
                             .event(clone!(state => move |_event: events::Click| {
                                 state.dialog_ref
-                                    .lock_ref().clone().unwrap()
-                                    .show_modal().unwrap();
+                                    .lock_ref().clone().expect("Can't get dialog")
+                                    .show_modal().expect("Can't open dialog");
                             }))
                         }),
                         html!("span", {
