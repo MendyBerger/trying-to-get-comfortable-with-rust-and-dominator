@@ -26,8 +26,34 @@ pub async fn get_translations(entries: &Vec<&String>) -> Vec<Translation> {
                 "comments": "fdsa",
                 "zeplin_reference": null,
                 "item_kind": "Button",
-                "status": "Approved",
+                "status": "Discuss",
                 "section": "sec1"
+            },
+            {
+                "id": "simple",
+                "english": "Hello world",
+                "hebrew": "כגד",
+                "in_app": false,
+                "in_element": false,
+                "in_mock": false,
+                "comments": "fdsa",
+                "zeplin_reference": null,
+                "item_kind": "hay",
+                "status": "OnHold",
+                "section": "sec2"
+            },
+            {
+                "id": "simple",
+                "english": "Hello world",
+                "hebrew": "כגד",
+                "in_app": false,
+                "in_element": false,
+                "in_mock": false,
+                "comments": "fdsa",
+                "zeplin_reference": null,
+                "item_kind": "Button",
+                "status": "Approved",
+                "section": "sec3"
             },
             {
                 "id": "complex",
@@ -40,7 +66,7 @@ pub async fn get_translations(entries: &Vec<&String>) -> Vec<Translation> {
                 "zeplin_reference": "https://google.com",
                 "item_kind": "Subheading",
                 "status": "Approved",
-                "section": "sec2"
+                "section": "sec4"
             }
         ]
     "#;

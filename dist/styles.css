@@ -38,6 +38,15 @@ main {
 .ftl-table .ftl-row {
     display: contents;
 }
+.ftl-table .ftl-sup-header-cell {
+    display: flex;
+    column-gap: 5px;
+    justify-content: flex-end;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    justify-content: end;
+}
 .ftl-table .ftl-cell, .ftl-table .ftl-header-cell {
     border: solid white 2px;
 }

@@ -40,6 +40,8 @@ features = [
     "console",
     "HtmlSelectElement",
     "HtmlDialogElement",
+    "HtmlOptionElement",
+    "HtmlOptionsCollection",
 ]
 
 [dependencies.url]
